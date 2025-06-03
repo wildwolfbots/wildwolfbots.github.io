@@ -26,7 +26,7 @@ header, footer {
 header {
   position: relative; /* needed for the overlay positioning */
   padding: 2em 0;
-  background-image: url('/images/headerbg.png');
+  background-image: url('/images/headerbg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

