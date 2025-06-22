@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Caderno 1",
+    "filename": "/posts/cad1.pdf",
+    "image": "/posts/ai-placeholder-cad1.png",
+    "description": "Caderno da equipe wolf",
+    "alt": "Caderno da equipe wolf"
+  },
+  {
+    "title": "Caderno 2",
+    "filename": "/",
+    "image": "/images/test.png",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem.",
+    "alt": "DEF"
+  },
+  {
+    "title": "Caderno 3",
+    "filename": "/",
+    "image": "/images/test.png",
+    "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit quisque faucibus ex sapien vitae pellentesque sem.",
+    "alt": "GHI"
+  }
+]
