@@ -17,5 +17,5 @@ function checkPassword() {
 }
 </script>
 Senha:
-<input type="password" id="pw" placeholder="Password" onenter="checkPassword()">
-<button onclick="checkPassword()">Submit</button>
+<input type="password" id="pw" placeholder="Senha" onenter="checkPassword()">
+<button onclick="checkPassword()">Ok</button>

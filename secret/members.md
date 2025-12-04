@@ -12,6 +12,7 @@ Clique para acessar, está tudo em formato de link
 
 [Drive com fotos](https://drive.google.com/drive/folders/1igwDManwytTE-EAAuzY1OMnlFLHwdDxE)
 
+[Falas](/post-docs/Falas.pdf)
 
 [Github](https://github.com/wildwolfbots)
 
