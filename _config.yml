@@ -29,6 +29,10 @@ description: ""
 
 remote_theme: "mmistakes/minimal-mistakes@4.27.3"
 
+head_scripts:
+  - /scripts/analytics.js
+
+
 plugins:
   - jekyll-feed
   - jekyll-remote-theme
