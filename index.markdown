@@ -8,4 +8,7 @@ Enquanto a Wild e a Little realizam o TBR, nós da Wolf, como os irmãos mais ve
 
 Abaixo você pode assistir um pequeno vídeo produzido pela nossa equipe, mostrando nossas interações e nosso desenvolvimento:
 
-![](/post-vid/IntroEquipe.mp4)
+<video autoplay muted loop playsinline width="100%">
+  <source src="/post-vid/IntroEquipe.mp4" type="video/mp4">
+  Seu navegador não suporta vídeo.
+</video>
