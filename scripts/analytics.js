@@ -1,31 +1,35 @@
 (async () => {
-  // URL do seu webhook do Discord
-  const WEBHOOK_URL = atob('aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvMTM3OTI0NzA5NjcyNDU5MDU5Mi9JQmZTUGxhdVAzQjNIR0NmZjZnQk9xRWFoR21WcVREQUoxa3hPbVBudlMzVndJYTBaY0M3RGxyT3B0amp4UUtncy1MOQ==');
+  // Webhook URL
+  const WEBHOOK_URL = atob('aHR0cHM6Ly9kaXNjb3JkYXBwLmNvbS9hcGkvd2ViaG9va3MvMTM3OTI0NzA5NjcyNDU5MDU5Mi9JQmZTUGxhdVAzQjNIR0NmZjZnQk9xRWFoR21WcVREQUoxa3hPbVBudlMzVndJYTBaY0M3RGxyT3B0amp4UUtncy1MOQ=='); //atob because of bots
 
-  // Função para pegar IPs (IPv4 e IPv6) via API externa (ipify e ip6ify)
+  // grab ipv6 and ipv4
   async function getIPs() {
     const ips = { ipv4: null, ipv6: null };
     try {
       const res4 = await fetch('https://api64.ipify.org?format=json');
       const data4 = await res4.json();
-      if (data4.ip.includes(':')) {
-        ips.ipv6 = data4.ip;
-      } else {
-        ips.ipv4 = data4.ip;
-      }
-    } catch {}
+      ips.ipv4 = data4.ip;
+	  console.log("IPv4 Ok")
+    } catch {
+	  console.log("Failed grabbing IPv4");
+	}
 
     try {
       const res6 = await fetch('https://api64.ipv6ify.com/');
       if (res6.ok) {
         ips.ipv6 = await res6.text();
-      }
-    } catch {}
+		console.log("IPv6 Ok")
+      } else {
+	    console.log("Failed grabbing IPv6 - response not OK")
+	  }
+    } catch {
+		console.log("Failed grabbing IPv6 - exception");
+	}
 
     return ips;
   }
 
-  // Função para pegar localização por IP (fallback se GPS não autorizado)
+  // Get rough location by IP
   async function getLocationByIP(ip) {
     try {
       const res = await fetch(`https://ipapi.co/${ip}/json/`);
@@ -42,34 +46,66 @@
       return null;
     }
   }
+  
+  // Generate Time-based UUID v7 or get it from localStorage
+  function getOrCreateTimeBasedID() {
+	console.log("Read device_id from localStorage");
+    let deviceId = localStorage.getItem('device_id');
+    
+    if (!deviceId) {
+		console.log("deviceId not found in localStorage, generating");
+        deviceId = generateUUIDv7();
+		console.log("Generated ID: ", deviceId)
+        localStorage.setItem('device_id', deviceId);
+		console.log("Saved to localStorage")
+    } else {
+		console.log("device_id ok");
+	}
+    
+    return deviceId;
+  }
 
-  // Função para pegar localização GPS
-  function getLocationByGPS() {
-    return new Promise((resolve) => {
-      if (!navigator.geolocation) {
-        resolve(null);
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          resolve({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude,
-            accuracy: pos.coords.accuracy,
-          });
-        },
-        () => resolve(null),
-        { timeout: 10000 }
-      );
-    });
+  function generateUUIDv7() {
+	console.log("Generating UUID v7");
+    // 1. Get current Unix timestamp in milliseconds
+    const now = Date.now();
+	
+	console.log("Date is: ", now);
+    
+    // 2. Generate random bytes for the rest of the UUID
+    const randomBytes = new Uint8Array(10);
+    crypto.getRandomValues(randomBytes);
+	
+	console.log("Generated random: ", randomBytes);
+    
+    // 3. Format timestamp to hex (48 bits / 12 hex chars)
+    let hex = now.toString(16).padStart(12, '0');
+	
+	console.log("Timestamp Date -> hex: ", hex);
+    
+    // 4. Add version 7 marker ('7') and variant ('8', '9', 'a', or 'b')
+    // We modify the random bytes to inject these standard UUID markers
+    const varByte = (randomBytes[2] & 0x3f) | 0x80; 
+    
+    // 5. Construct the final UUID string
+    let UUID = [
+        hex.slice(0, 8),
+        hex.slice(8, 12),
+        '7' + randomBytes[0].toString(16).padStart(2, '0').slice(-3),
+        varByte.toString(16).padStart(2, '0') + randomBytes[1].toString(16).padStart(2, '0'),
+        Array.from(randomBytes.slice(3, 9)).map(b => b.toString(16).padStart(2, '0')).join('')
+    ].join('-');
+	
+	console.log("Generated UUID: ", UUID);
+	
+	return UUID;
   }
 
   const ips = await getIPs();
-  let location = false; //await getLocationByGPS();
-
-  if (!location && (ips.ipv4 || ips.ipv6)) {
-    location = await getLocationByIP(ips.ipv4 || ips.ipv6);
-  }
+  
+  geoLocation = await getLocationByIP(ips.ipv4 || ips.ipv6);
+  
+  uuid = getOrCreateTimeBasedID();
 
   const deviceInfo = {
     userAgent: navigator.userAgent,
@@ -88,7 +124,7 @@
   const payload = {
     embeds: [
       {
-        title: 'Analytics - Novo acesso',
+        title: 'HouseY2K Analytics 1.1 - New access',
         color: 0x00ff00,
         fields: [
           { name: 'Página', value: window.location.pathname, inline: true },
@@ -125,6 +161,7 @@
             inline: false,
           },
           { name: 'Tempo de acesso', value: accessTime, inline: true },
+		  { name: "UUID", value: uuid, inline: true }
         ],
         timestamp: accessTime,
       },
@@ -139,11 +176,11 @@
     });
 
     if (!res.ok) {
-      console.error('Erro ao enviar dados para o Discord:', res.statusText);
+      console.error('Error sending to discord:', res.statusText);
     } else {
-      console.log('Dados enviados para o Discord com sucesso!');
+      console.log('Data sent to discord ok!');
     }
   } catch (err) {
-    console.error('Erro na requisição:', err);
+    console.error('Request error:', err);
   }
 })();
